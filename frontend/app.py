@@ -16,7 +16,6 @@ if "messages" not in st.session_state:
         {"role": "assistant", "content": "Upload an article and ask anything about it!"}
     ]
 
-
 messages = st.session_state.messages
 for msg in messages:
     st.chat_message(msg["role"]).write(msg["content"])
@@ -33,27 +32,36 @@ with st.sidebar:
         else:
             st.info("OpenAI API Key Authenticated successfully!") 
             st.session_state.valid_key = True
-   
+
     uploaded_file = st.file_uploader("Upload an article", type=("pdf", "docx", "txt"))
-    if uploaded_file and st.session_state.valid_key and not st.session_state.file_uploaded:
-        with st.spinner("Processing the uploaded file..."):
-            # Save the uploaded file temporarily
-            temp_file_path = f"temp_{uploaded_file.name}"
-            with open(temp_file_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
-            
-            try:
-                # Process and index the file
-                process_and_index_file(temp_file_path, OpenAI_api_key)
-                st.success("File uploaded and processed successfully!", icon="✅")
-                st.session_state.file_uploaded = True
-            except Exception as e:
-                st.error(f"An error occurred: {str(e)}", icon="🚨")
-            finally:
-                # Clean up the temporary file
-                import os
-                if os.path.exists(temp_file_path):
-                    os.remove(temp_file_path)
+    
+    # Check if a new file is uploaded
+    if uploaded_file and st.session_state.valid_key:
+        # Reset the file_uploaded flag if a new file is uploaded
+        if "last_uploaded_file" not in st.session_state or st.session_state.last_uploaded_file != uploaded_file.name:
+            st.session_state.file_uploaded = False
+            st.session_state.last_uploaded_file = uploaded_file.name  # Track the uploaded file name
+
+        # Process the file if it hasn't been processed yet
+        if not st.session_state.file_uploaded:
+            with st.spinner("Processing the uploaded file..."):
+                # Save the uploaded file temporarily    
+                temp_file_path = f"temp_{uploaded_file.name}"
+                with open(temp_file_path, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+                
+                try:
+                    # Process and index the file
+                    process_and_index_file(temp_file_path, OpenAI_api_key)
+                    st.success("File uploaded and processed successfully!", icon="✅")
+                    st.session_state.file_uploaded = True
+                except Exception as e:
+                    st.error(f"An error occurred: {str(e)}", icon="🚨")
+                finally:
+                    # Clean up the temporary file
+                    import os
+                    if os.path.exists(temp_file_path):
+                        os.remove(temp_file_path)
 
 prompt = st.chat_input(placeholder="Type your question here, e.g., 'What is the main idea of the article?'")
 
