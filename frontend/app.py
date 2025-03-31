@@ -69,8 +69,11 @@ if prompt and st.session_state.file_uploaded and st.session_state.valid_key:
     messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
 
-    response_data = call_rag_app(prompt, OpenAI_api_key)
-    st.session_state["response"] = response_data["response"]
+    # Add a spinner while processing the question
+    with st.spinner("Generating a response..."):
+        response_data = call_rag_app(prompt, OpenAI_api_key)
+        st.session_state["response"] = response_data["response"]
+
     with st.chat_message("assistant"):
         messages.append({"role": "assistant", "content": st.session_state["response"]})
         st.write(st.session_state["response"])
