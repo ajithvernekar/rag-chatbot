@@ -1,0 +1,10 @@
+# OpenAI Configurations
+OPENAI_API_KEY="<OPENAI_API_KEY>"
+
+# Pinecone Configurations
+PINECONE_API_KEY="<PINECONE_API_KEY>"
+PINECONE_ENVIRONMENT="<PINECONE_ENVIRONMENT>"
+INDEX_NAME="<PiNECONE_INDEX_NAME>"
+
+# Public URL to access the backend service from the frontend or other services.
+BASE_URL = "<BASE_URL>"
