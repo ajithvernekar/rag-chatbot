@@ -10,4 +10,7 @@ pinecone==5.4.2
 langchain==0.3.21
 python-docx
 pypdf
+unstructured
+pandas
+openpyxl
 tiktoken
