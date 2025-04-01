@@ -3,11 +3,12 @@ import logging, time
 from dotenv import load_dotenv
 from langchain_pinecone import PineconeVectorStore
 from langchain_openai import OpenAIEmbeddings
-from langchain_community.document_loaders import PyPDFLoader, TextLoader
+from langchain_community.document_loaders import PyPDFLoader, TextLoader, UnstructuredExcelLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from pinecone import Pinecone, ServerlessSpec
 from langchain.schema import Document
 from docx import Document as DocxDocument
+import pandas as pd
 
 # Load environment variables
 load_dotenv()
@@ -55,6 +56,17 @@ def process_and_index_file(file_path: str, openai_api_key: str):
     elif file_path.endswith(".txt"):
         loader = TextLoader(file_path)
         documents = loader.load()
+    elif file_path.endswith(".xlsx") or file_path.endswith(".xls"):
+        logging.info(f"Loading Excel file: {file_path}")
+        try:
+            # Read the Excel file into a pandas DataFrame
+            df = pd.read_excel(file_path)
+            # Convert the DataFrame to a single string
+            text = df.to_string(index=False)
+            documents = [Document(page_content=text, metadata={"source": file_path})]
+        except Exception as e:
+            logging.error(f"Error reading Excel file: {str(e)}")
+            raise
     else:
         raise ValueError("Unsupported file format")
     
