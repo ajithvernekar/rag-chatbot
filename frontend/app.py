@@ -33,7 +33,7 @@ with st.sidebar:
             st.info("OpenAI API Key Authenticated successfully!") 
             st.session_state.valid_key = True
 
-    uploaded_file = st.file_uploader("Upload an article", type=("pdf", "docx", "txt"))
+    uploaded_file = st.file_uploader("Upload an article", type=("pdf", "docx", "txt", ".xlsx", "xls"))
     
     # Check if a new file is uploaded
     if uploaded_file and st.session_state.valid_key:
