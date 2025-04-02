@@ -1,4 +1,4 @@
-import requests, os
+import requests, os, logging
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -39,7 +39,11 @@ def call_rag_app(question, api_key):
 
     try:
         response = requests.post(api_url, json=payload, headers=headers)
-        response.raise_for_status()  
-        return response.json()
+        response.raise_for_status()
+        data = response.json()
+
+        return data
     except requests.exceptions.RequestException as e:
-        return {"error": str(e)}
+        logging.error(f"Error calling RAG API: {str(e)}")
+        raise
+
