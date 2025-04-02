@@ -63,11 +63,11 @@ async def handle_query(user_input: str, openai_api_key: str):
         llm = ChatOpenAI(api_key=openai_api_key, model="gpt-3.5-turbo")
 
         # Initialize Pinecone
-        # pinecone, spec = initialize_pinecone()      
         pinecone = Pinecone(PINECONE_API_KEY)
         vectorstore = PineconeVectorStore(
-        index_name=INDEX_NAME,
-        embedding=OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key=openai_api_key))
+            index_name=INDEX_NAME,
+            embedding=OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key=openai_api_key)
+        )
         retriever = vectorstore.as_retriever()
 
         # Retrieve relevant documents
@@ -80,10 +80,14 @@ async def handle_query(user_input: str, openai_api_key: str):
         context = "\n".join([doc.page_content for doc in ranked_docs])
 
         # Generate response using LLM
-        qa_chain = ConversationalRetrievalChain.from_llm(llm, retriever=retriever,memory=memory)
+        qa_chain = ConversationalRetrievalChain.from_llm(llm, retriever=retriever, memory=memory)
         response = qa_chain.run({"question": user_input, "chat_history": []})
 
-        return {"response": response}
+        # Return the response along with the retrieved documents
+        return {
+            "response": response,
+            "retrieved_documents": [doc.page_content for doc in ranked_docs]
+        }
     except Exception as e:
         logging.error(f"Error in handle_query: {str(e)}")
         raise
