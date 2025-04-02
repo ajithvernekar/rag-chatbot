@@ -12,10 +12,11 @@ This repository contains a Retrieval-Augmented Generation (RAG) chatbot that lev
 4. [Setup Instructions](#setup-instructions)
 5. [Environment Variables](#environment-variables)
 6. [How to Run](#how-to-run)
-7. [Usage](#usage)
-8. [Model Details](#model-details)
-9. [Contributing](#contributing)
-10. [License](#license)
+7. [Evaluation](#evaluation)
+8. [Usage](#usage)
+9. [Model Details](#model-details)
+10. [Contributing](#contributing)
+11. [License](#license)
 
 ---
 
@@ -46,6 +47,8 @@ frontend/
     query_handler.py
     data_ingestion.py
     requirements.txt
+evaluation/
+    evaluation.py
 Dockerfile
 env_template
 README.md
@@ -56,6 +59,7 @@ README.md
 - **Backend**: Handles query processing, document retrieval, and response generation.
 - **Frontend**: Provides a web interface for users to interact with the chatbot.
 - **Model**: Pretrained SentenceTransformer model for embedding and reranking.
+- **Evaluation**: Contains scripts for evaluating the chatbot's performance.
 
 ---
 
@@ -90,23 +94,12 @@ README.md
      BASE_URL=<backend_base_url>
      ```
 
-3. Install dependencies for the backend:
+3. Create a virtual environment and install dependencies:
    ```bash
-   cd backend
-   python -m venv venv_backend
-   source venv_backend/bin/activate  # On Windows: venv_backend\Scripts\activate
-   pip install -r requirements.txt
-   
-   # Download the model
-   python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2').save('./model')"
-   ```
-
-4. Install dependencies for the frontend:
-   ```bash
-   cd ../frontend
-   python -m venv venv_frontend
-   source venv_frontend/bin/activate  # On Windows: venv_frontend\Scripts\activate
-   pip install -r requirements.txt
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r backend/requirements.txt
+   pip install -r frontend/requirements.txt
    ```
 
 ---
@@ -176,6 +169,51 @@ The project requires the following environment variables:
 
 ---
 
+## Evaluation
+
+The evaluation script is used to assess the performance of the RAG (Retrieval-Augmented Generation) chatbot pipeline using various metrics such as `context_recall`, `faithfulness`, and `answer_relevancy`.
+
+### Steps to Run the Evaluation
+
+1. **Set Up Environment Variables**:
+   Ensure the following environment variables are set in your `.env` file:
+   - `OPENAI_API_KEY`: Your OpenAI API key.
+
+2. **Install Dependencies**:
+   Make sure all required Python dependencies are installed. You can do this by running:
+   ```bash
+   pip install -r requirements.txt
+   pip install ragas
+   ```
+
+3. **Run the Evaluation Script**:
+   Navigate to the `evaluation/` folder and execute the evaluation script:
+   ```bash
+   python -m evaluation.evaluation
+   ```
+
+### Output
+
+The evaluation results will be saved to a CSV file named `evaluation/evaluation_results.csv`. The results will also be printed to the console.
+
+### Metrics Used
+
+- **Context Recall**: Measures how well the retrieved documents align with the context of the question.
+- **Faithfulness**: Evaluates whether the generated answers are consistent with the retrieved documents.
+- **Answer Relevancy**: Assesses the relevance of the generated answers to the questions.
+
+### Example Usage
+
+The evaluation script processes a set of predefined questions and reference answers from the book *Atomic Habits*. It queries the RAG API, retrieves documents, and generates answers, which are then evaluated against the reference answers.
+
+### Troubleshooting
+
+- **Validation Errors**: Ensure that the `retrieved_documents` field in the API response is a list of strings.
+- **API Errors**: Check that the `BASE_URL` and `OPENAI_API_KEY` are correctly configured in the `.env` file.
+- **Dependencies**: Ensure all required libraries are installed and compatible with your Python version.
+
+---
+
 ## Usage
 
 ### Backend API
@@ -241,4 +279,3 @@ Contributions are welcome! Please follow these steps:
 ## License
 
 This project is licensed under the Apache 2.0 License. See the LICENSE file for details.
-
