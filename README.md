@@ -24,6 +24,18 @@ This repository contains a Retrieval-Augmented Generation (RAG) chatbot that lev
 
 Retrieval-Augmented Generation (RAG) is a framework that combines information retrieval with generative models. Instead of relying solely on a language model's training data, RAG retrieves relevant documents from an external knowledge base (e.g., Pinecone) and uses them as context for generating responses. This approach improves the accuracy and relevance of responses, especially for domain-specific queries.
 
+![RAG_Architecture](https://github.com/user-attachments/assets/89a14dd6-b6a4-4b01-adeb-8c8b8a0ccbf1)
+
+
+#### RETRIEVAL STEP
+The chatbot first retrieves relevant document chunks using a vector similarity search in Pinecone. This ensures that the most contextually relevant data is available for response generation.
+
+#### AUGMENTATION STEP
+The retrieved document chunks are passed to the LLM as context, ensuring that the response is generated based on actual document content rather than generic knowledge.
+
+#### GENERATION STEP
+The LLM synthesizes a response by leveraging the retrieved context, ensuring answers remain accurate and grounded in the uploaded documents.
+
 ---
 
 ## Features
